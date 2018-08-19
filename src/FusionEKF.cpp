@@ -46,10 +46,10 @@ FusionEKF::FusionEKF() {
   x << 0, 0, 0, 0;
 
   MatrixXd P (4, 4);
-  P << 0, 0, 0, 0,
-       0, 0, 0, 0,
-       0, 0, 0, 0,
-       0, 0, 0, 0;
+  P << 1, 0, 0, 0,
+       0, 1, 0, 0,
+       0, 0, 1000, 0,
+       0, 0, 0, 1000;
 
   MatrixXd F (4, 4);
   F << 1, 0, 1, 0,
@@ -126,22 +126,20 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Update the process noise covariance matrix.
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
-  long long delta_t = measurement_pack.timestamp_ - previous_timestamp_;
+  float delta_t = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
   previous_timestamp_ = measurement_pack.timestamp_;
   ekf_.F_(0, 2) = delta_t;
   ekf_.F_(1, 3) = delta_t;
 
   const long long noise_ax = 9;
   const long long noise_ay = 9;
-  long long noise_ax_2 = noise_ax * noise_ax;
-  long long noise_ay_2 = noise_ay * noise_ay;
-  long long delta_t_2 = delta_t * delta_t;
-  long long delta_t_3 = delta_t * delta_t_2;
-  long long delta_t_4 = delta_t * delta_t_3;
-  ekf_.Q_ << delta_t_4 * noise_ax_2 / 4, 0, delta_t_3 * noise_ax_2 / 2, 0,
-             0, delta_t_4 * noise_ay_2 / 4, 0, delta_t_3 * noise_ay_2 / 2,
-             delta_t_3 * noise_ax_2 / 2, 0, delta_t_2 * noise_ax_2, 0,
-             0, delta_t_3 * noise_ay_2 / 2, 0, delta_t_2 * noise_ay_2;
+  float delta_t_2 = delta_t * delta_t;
+  float  delta_t_3 = delta_t * delta_t_2;
+  float delta_t_4 = delta_t * delta_t_3;
+  ekf_.Q_ << delta_t_4 * noise_ax / 4, 0, delta_t_3 * noise_ax / 2, 0,
+             0, delta_t_4 * noise_ay / 4, 0, delta_t_3 * noise_ay / 2,
+             delta_t_3 * noise_ax / 2, 0, delta_t_2 * noise_ax, 0,
+             0, delta_t_3 * noise_ay / 2, 0, delta_t_2 * noise_ay;
 
   ekf_.Predict();
 

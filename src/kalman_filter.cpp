@@ -59,6 +59,10 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   VectorXd hx (3);
   float square_sqrt = sqrt(px * px + py * py);
+  if (square_sqrt < 0.0001){
+    std::cout << "Divided by 0 occurs while calculating radar measurement transfer." << std::endl;
+    return;
+  }
   hx << square_sqrt, atan2(py, px), (px * vx + py * vy) / square_sqrt;
 
   VectorXd y = z - hx;

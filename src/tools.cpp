@@ -33,7 +33,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     rmse += residual_2;
   }
 
-  rmse /= estimations.size();
+  rmse /= 1.0 * estimations.size();
   rmse = rmse.array().sqrt();
   return rmse;
 }
@@ -52,10 +52,10 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
   float px_py_square = px * px + py * py;
   float px_py_square_root = sqrt(px_py_square);
-  float px_py_3_over_2 = px_py_square * px_py_square_root;
+  float px_py_3_over_2 = pow(px_py_square, 1.5);
 
   if (fabs(px_py_square) < 0.0001){
-    cout << "Divided by 0 occurs while calculating Jacobian Matrix" << endl;
+    std::cout << "Divided by 0 occurs while calculating Jacobian Matrix" << std::endl;
     return Hj;
   }
 

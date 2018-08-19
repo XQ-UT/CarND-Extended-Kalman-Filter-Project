@@ -48,8 +48,8 @@ FusionEKF::FusionEKF() {
   MatrixXd P (4, 4);
   P << 1, 0, 0, 0,
        0, 1, 0, 0,
-       0, 0, 1000, 0,
-       0, 0, 0, 1000;
+       0, 0, 5, 0,
+       0, 0, 0, 5;
 
   MatrixXd F (4, 4);
   F << 1, 0, 1, 0,
@@ -135,10 +135,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   float delta_t_2 = delta_t * delta_t;
   float  delta_t_3 = delta_t * delta_t_2;
   float delta_t_4 = delta_t * delta_t_3;
-  ekf_.Q_ << delta_t_4 * noise_ax / 4, 0, delta_t_3 * noise_ax / 2, 0,
-             0, delta_t_4 * noise_ay / 4, 0, delta_t_3 * noise_ay / 2,
-             delta_t_3 * noise_ax / 2, 0, delta_t_2 * noise_ax, 0,
-             0, delta_t_3 * noise_ay / 2, 0, delta_t_2 * noise_ay;
+  ekf_.Q_ << delta_t_4 * noise_ax / 4.0, 0, delta_t_3 * noise_ax / 2.0, 0,
+             0, delta_t_4 * noise_ay / 4.0, 0, delta_t_3 * noise_ay / 2.0,
+             delta_t_3 * noise_ax / 2.0, 0, delta_t_2 * noise_ax, 0,
+             0, delta_t_3 * noise_ay / 2.0, 0, delta_t_2 * noise_ay;
 
   ekf_.Predict();
 
